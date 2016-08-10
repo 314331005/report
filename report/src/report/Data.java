@@ -5,6 +5,7 @@ public class Data {
 	private String idNumber;
 	private String cardId;
 	private String userName;
+	private String idserial;
 
 	public Data() {
 	}
@@ -39,6 +40,15 @@ public class Data {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
+	public String getIdserial() {
+		return idserial;
+	}
+
+	public void setIdserial(String idserial) {
+		this.idserial = idserial;
+	}
+	
 
 	
 }

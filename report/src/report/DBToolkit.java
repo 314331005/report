@@ -22,6 +22,7 @@ public class DBToolkit {
                 try { 
                         props.load(DBToolkit.class.getResourceAsStream("/jdbc.properties")); 
                 } catch (IOException e) { 
+                		e.printStackTrace();
                         log.error("#ERROR# :系统加载sysconfig.properties配置文件异常，请检查！", e); 
                 } 
                 url = (props.getProperty("jdbc.url")); 
@@ -33,6 +34,7 @@ public class DBToolkit {
                         Class.forName(driver); 
                 } catch (ClassNotFoundException e) { 
                         log.error("#ERROR# :加载数据库驱动异常，请检查！", e); 
+                        e.printStackTrace();
                 } 
         } 
 
@@ -48,6 +50,7 @@ public class DBToolkit {
                         conn = DriverManager.getConnection(url, username, password); 
                 } catch (SQLException e) { 
                         log.error("#ERROR# :创建数据库连接发生异常，请检查！", e); 
+                        e.printStackTrace();
                 } 
                 return conn; 
         } 
@@ -68,6 +71,7 @@ public class DBToolkit {
                         rs = stmt.executeQuery(staticSql); 
                 } catch (SQLException e) { 
                         log.error("#ERROR# :执行SQL语句出错，请检查！\n" + staticSql, e); 
+                        e.printStackTrace();
                 } 
                 return rs; 
         } 
@@ -86,6 +90,7 @@ public class DBToolkit {
                         stmt.execute(staticSql); 
                 } catch (SQLException e) { 
                         log.error("#ERROR# :执行SQL语句出错，请检查！\n" + staticSql, e); 
+                        e.printStackTrace();
                 } 
         } 
 
@@ -106,6 +111,7 @@ public class DBToolkit {
                         stmt.executeBatch(); 
                 } catch (SQLException e) { 
                         log.error("#ERROR# :执行批量SQL语句出错，请检查！", e); 
+                        e.printStackTrace();
                 } 
         } 
 
@@ -118,6 +124,7 @@ public class DBToolkit {
                         } 
                 } catch (SQLException e) { 
                         log.error("#ERROR# :关闭数据库连接发生异常，请检查！", e); 
+                        e.printStackTrace();
                 } 
         }
 

@@ -51,7 +51,7 @@ public class Main extends JFrame {
 					UnVisible();
 				}
 			});
-			MenuItem itmExit = new MenuItem("退出");
+			MenuItem itmExit = new MenuItem("colse");
 			itmExit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Exit();
