@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -21,8 +23,9 @@ public class ExcelToDisk {
 	
 	static Connection conn = null;
 	static ResultSet res = null;
-	//static String staticSql = "select IDNumber, CARDID, USERNAME from User_Infor_Message";
-	static String staticSql = "SELECT * FROM test WHERE IDNumber IN (SELECT IDNumber FROM test  GROUP BY CARDID)";
+	static String staticSql = "select IDNumber, IDSERIAL, CARDNO,  CARDID, USERNAME from User_Infor_Message";
+	private static final Log log = LogFactory.getLog(DBToolkit.class); 
+	//static String staticSql = "SELECT * FROM User_Infor_Message WHERE IDNumber IN (SELECT IDNumber FROM User_Infor_Message  GROUP BY CARDID )";
 	/**
 	 * 价值数据
 	 */
@@ -37,17 +40,20 @@ public class ExcelToDisk {
 			String cardId;
 			String userName;
 			String idserial;
+			String cardNo;
 			idNumber = res.getString("IDNumber");
 			cardId = res.getString("CARDID");
 			userName = res.getString("USERNAME");
-			//idserial = res.getString("IDSERIAL");
+			idserial = res.getString("IDSERIAL");
+			cardNo = res.getString("CARDNO");
 			
 			
 			Data d = new Data();
 			d.setIdNumber(idNumber);
 			d.setCardId(cardId);
 			d.setUserName(userName);
-			//d.setIdserial(idserial);
+			d.setCardNo(cardNo);
+			d.setIdserial(idserial);
 			list.add(d);
 			
 		}
@@ -109,7 +115,7 @@ public class ExcelToDisk {
 			if(Hex.getHex(d.getCardId()).equals(""))  continue;
 			row.createCell((short) 7).setCellValue(Hex.getHex(d.getCardId()));
 			row.createCell((short) 0).setCellValue(d.getUserName());
-			row.createCell((short) 1).setCellValue(d.getIdNumber());
+			row.createCell((short) 1).setCellValue(d.getCardNo());
 			//row.createCell((short) 2).setCellValue(3);
 			//row.createCell((short) 3).setCellValue(4);
 			//row.createCell((short) 4).setCellValue(5);
@@ -158,19 +164,24 @@ public class ExcelToDisk {
 		List<Data> list = ExcelToDisk.getData();
 		System.out.println(list.size());
 		
-		connection = DBToolkit.getConnection();
+		connection = DBToolkit2.getConnection();
 		 //用事务，必须设置setAutoCommit false，表示手动提交
 		connection.setAutoCommit(false);
 		 //设置事务的隔离级别。
 		connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
 		  
 		// String sql1 = "insert into userinfo(username,pswd) values(?,?)";
-		String sql2 = "update test1 set CardData=? where PCode = ?";
+		String sql2 = "update Personnel set CardData=? , MobilePhone = ? where PCode = ?";
+		int i= 1;
 		for(Data d : list){
+			log.info(i + "     CARDNO: "+ d.getCardNo() +" cardid:" + d.getCardId() +" idserial : "+ d.getIdserial());
+			System.out.println(i + "     CARDNO: "+ d.getCardNo() +" cardid:" + d.getCardId() +" idserial : "+ d.getIdserial());
 			pstmt = connection.prepareStatement(sql2);
 			pstmt.setString(1, Hex.getHex(d.getCardId()));
-			pstmt.setString(2, d.getIdNumber());               
+			pstmt.setString(2, d.getIdserial());  
+			pstmt.setString(3, d.getCardNo());
 			pstmt.executeUpdate();
+			i++;
 		}
 		 //提交事务
 		connection.commit();
